@@ -3,6 +3,11 @@ const express = require("express");
 const twilio = require("twilio");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const { createClient } = require("@supabase/supabase-js");
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY,
+);
 
 const app = express();
 app.use(express.json());
@@ -42,6 +47,7 @@ function sendWhatsAppReply(res, message) {
 app.post("/whatsapp", async (req, res) => {
   try {
     const message = req.body.Body;
+    const phoneNumber = req.body.From;
     if (!message) {
       const twiml = new twilio.twiml.MessagingResponse();
       twiml.message(
@@ -56,6 +62,12 @@ app.post("/whatsapp", async (req, res) => {
       sendWhatsAppReply(res, reply);
     } else if (intent === "SHOPPING") {
       const reply = await getShoppingList(message);
+      await supabase.from("conversations").insert({
+        phone_number: phoneNumber,
+        message: message,
+        shopping_list: reply,
+      });
+
       sendWhatsAppReply(res, reply);
     } else {
       const reply = "I can only help with shopping list";

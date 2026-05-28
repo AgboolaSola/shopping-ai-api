@@ -95,6 +95,18 @@ app.post("/shopping-list", async (req, res) => {
   }
 });
 
+app.get("/conversations", async (req, res) => {
+  try {
+    const { data, error } = await supabase.from("conversations").select("*");
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+    res.json({ data });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);

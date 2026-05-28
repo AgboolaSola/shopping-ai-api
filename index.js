@@ -13,7 +13,7 @@ const supabase = createClient(
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors({ origin: "https://shopping-dashboard-three.vercel.app/" }));
+app.use(cors({ origin: "https://shopping-dashboard-three.vercel.app" }));
 
 async function getShoppingList(message) {
   const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });

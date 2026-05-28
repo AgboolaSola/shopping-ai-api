@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const twilio = require("twilio");
+const cors = require("cors");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const { createClient } = require("@supabase/supabase-js");
@@ -12,6 +13,7 @@ const supabase = createClient(
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors());
 
 async function getShoppingList(message) {
   const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
